@@ -1,9 +1,7 @@
 {
-  "replace": false,
   "values": [
     "dynamictreesplus:pillar_cactus_sapling",
     "dynamictreesplus:pipe_cactus_sapling",
-    "dynamictreesplus:red_mushroom_sapling",
     "dynamictreesplus:saguaro_cactus_sapling"
   ]
 }
