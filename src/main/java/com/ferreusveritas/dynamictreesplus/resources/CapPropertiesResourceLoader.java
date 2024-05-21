@@ -10,6 +10,7 @@ import com.ferreusveritas.dynamictrees.tree.family.Family;
 import com.ferreusveritas.dynamictreesplus.block.mushroom.CapProperties;
 import com.ferreusveritas.dynamictreesplus.systems.mushroomlogic.MushroomShapeConfiguration;
 import com.ferreusveritas.dynamictreesplus.systems.mushroomlogic.shapekits.MushroomShapeKit;
+import net.minecraft.world.level.material.MapColor;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
@@ -95,11 +96,14 @@ public class CapPropertiesResourceLoader extends JsonRegistryResourceLoader<CapP
         return JsonHelper.getOrDefault(json, "generate_block", Boolean.class, true);
     }
 
+    public MapColor getDefaultMapColor() {
+        return MapColor.PLANT;
+    }
+
     private void generateBlocks(CapProperties capProperties, JsonObject json) {
         final BlockBehaviour.Properties blockProperties = JsonHelper.getBlockProperties(
                 json,
-                capProperties.getDefaultMaterial(),
-                capProperties.getDefaultMaterial().getColor(),
+                capProperties.getDefaultMapColor(),
                 capProperties::getDefaultBlockProperties,
                 error -> this.logError(capProperties.getRegistryName(), error),
                 warning -> this.logWarning(capProperties.getRegistryName(), warning)
