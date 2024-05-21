@@ -19,7 +19,7 @@ import com.ferreusveritas.dynamictrees.util.*;
 import com.ferreusveritas.dynamictreesplus.data.CapStateGenerator;
 import com.ferreusveritas.dynamictreesplus.systems.mushroomlogic.MushroomCapDisc;
 import com.ferreusveritas.dynamictreesplus.tree.HugeMushroomSpecies;
-import com.mojang.math.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -38,13 +38,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.LootDataManager;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -198,12 +198,13 @@ public class CapProperties extends RegistryEntry<CapProperties> implements Reset
         this.fireSpreadSpeed = fireSpreadSpeed;
     }
 
-    public Material getDefaultMaterial() {
-        return Material.WOOD;
+    public MapColor getDefaultMapColor() {
+        return MapColor.WOOD;
     }
 
-    public BlockBehaviour.Properties getDefaultBlockProperties(final Material material, final MaterialColor materialColor) {
-        return BlockBehaviour.Properties.of(material, materialColor)
+    public BlockBehaviour.Properties getDefaultBlockProperties(final MapColor mapColor) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(mapColor)
                 .strength(0.2F)
                 .sound(SoundType.WOOD);
     }
@@ -341,8 +342,8 @@ public class CapProperties extends RegistryEntry<CapProperties> implements Reset
         return ParticleTypes.WHITE_ASH;
     }
 
-    public Vector3d sporeParticleSpeed(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        return new Vector3d(1, 0, 1);
+    public Vec3 sporeParticleSpeed(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        return new Vec3(1, 0, 1);
     }
 
     ///////////////////////////////////////////
@@ -372,9 +373,6 @@ public class CapProperties extends RegistryEntry<CapProperties> implements Reset
         return blockLootTableSupplier.getName();
     }
 
-    public LootTable getBlockLootTable(LootTables lootTables, Species species) {
-        return blockLootTableSupplier.get(lootTables, species);
-    }
 
     public boolean shouldGenerateBlockDrops() {
         return shouldGenerateDrops();
@@ -382,9 +380,9 @@ public class CapProperties extends RegistryEntry<CapProperties> implements Reset
 
     public LootTable.Builder createBlockDrops() {
         if (mushroomDropChances != null && getPrimitiveCapBlock().isPresent()) {
-            return DTLootTableProvider.createLeavesBlockDrops(primitiveCap.getBlock(), mushroomDropChances);
+            return DTLootTableProvider.BlockLoot.createLeavesBlockDrops(primitiveCap.getBlock(), mushroomDropChances);
         }
-        return DTLootTableProvider.createLeavesDrops(mushroomDropChances, LootContextParamSets.BLOCK);
+        return DTLootTableProvider.BlockLoot.createLeavesDrops(mushroomDropChances, LootContextParamSets.BLOCK);
     }
 
     private final LootTableSupplier lootTableSupplier;
@@ -393,7 +391,7 @@ public class CapProperties extends RegistryEntry<CapProperties> implements Reset
         return lootTableSupplier.getName();
     }
 
-    public LootTable getLootTable(LootTables lootTables, Species species) {
+    public LootTable getLootTable(LootDataManager lootTables, Species species) {
         return lootTableSupplier.get(lootTables, species);
     }
 
@@ -402,19 +400,19 @@ public class CapProperties extends RegistryEntry<CapProperties> implements Reset
     }
 
     public LootTable.Builder createDrops() {
-        return DTLootTableProvider.createLeavesDrops(mushroomDropChances, DTLootParameterSets.LEAVES);
+        return DTLootTableProvider.BlockLoot.createLeavesDrops(mushroomDropChances, DTLootParameterSets.LEAVES);
     }
 
     public List<ItemStack> getDrops(Level level, BlockPos pos, ItemStack tool, Species species) {
         if (level.isClientSide) {
             return Collections.emptyList();
         }
-        return getLootTable(Objects.requireNonNull(level.getServer()).getLootTables(), species)
-                .getRandomItems(createLootContext(level, pos, tool, species));
+        return getLootTable(Objects.requireNonNull(level.getServer()).getLootData(), species)
+                .getRandomItems(createLootParams(level, pos, tool, species));
     }
 
-    private LootContext createLootContext(Level level, BlockPos pos, ItemStack tool, Species species) {
-        return new LootContext.Builder(LevelContext.getServerLevelOrThrow(level))
+    private LootParams createLootParams(Level level, BlockPos pos, ItemStack tool, Species species) {
+        return new LootParams.Builder(LevelContext.getServerLevelOrThrow(level))
                 .withParameter(LootContextParams.BLOCK_STATE, level.getBlockState(pos))
                 .withParameter(DTLootContextParams.SPECIES, species)
                 .withParameter(DTLootContextParams.SEASONAL_SEED_DROP_FACTOR, species.seasonalSeedDropFactor(LevelContext.create(level), pos))
