@@ -25,6 +25,10 @@ public class CactusFamily extends Family {
         super(registryName);
     }
 
+    @Override
+    public MapColor getDefaultBranchMapColor() {
+        return MapColor.PLANT;
+    }
 
     @Override
     public SoundType getDefaultBranchSoundType() {

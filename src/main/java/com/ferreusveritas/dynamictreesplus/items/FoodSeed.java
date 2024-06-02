@@ -2,7 +2,9 @@ package com.ferreusveritas.dynamictreesplus.items;
 
 import com.ferreusveritas.dynamictrees.item.Seed;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 
@@ -16,4 +18,9 @@ public class FoodSeed extends Seed {
         super(species, new Item.Properties().food(SAGUARO_FRUIT));
     }
 
+    @Override
+    public boolean canBeHurtBy(DamageSource pDamageSource) {
+        if (pDamageSource.is(DamageTypes.CACTUS)) return false;
+        return super.canBeHurtBy(pDamageSource);
+    }
 }

@@ -197,9 +197,9 @@ public class CactusSpecies extends Species {
     @Override
     public void addSaplingTextures(BiConsumer<String, ResourceLocation> textureConsumer,
                                    ResourceLocation leavesTextureLocation, ResourceLocation barkTextureLocation) {
-        final ResourceLocation sideLoc = surround(this.getRegistryName(), "block/", "_side");
-        final ResourceLocation topLoc = surround(this.getRegistryName(), "block/", "_top");
-        final ResourceLocation botLoc = surround(this.getRegistryName(), "block/", "_bottom");
+        ResourceLocation sideLoc = this.getFamily().getTexturePath(Family.BRANCH).orElse(suffix(barkTextureLocation, "_side"));
+        ResourceLocation topLoc = this.getFamily().getTexturePath(Family.BRANCH_TOP).orElse(suffix(barkTextureLocation, "_top"));
+        ResourceLocation botLoc = this.getFamily().getTexturePath(CactusFamily.BRANCH_BOTTOM).orElse(suffix(barkTextureLocation, "_bottom"));
         textureConsumer.accept("side", sideLoc);
         textureConsumer.accept("top", topLoc);
         textureConsumer.accept("bottom", botLoc);

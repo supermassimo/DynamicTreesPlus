@@ -30,7 +30,7 @@ repositories {
             includeGroup("curse.maven")
         }
     }
-    //maven("https://harleyoconnor.com/maven")
+    maven("https://harleyoconnor.com/maven")
     maven("https://squiddev.cc/maven/") //cc-twekaed
 }
 
@@ -88,18 +88,13 @@ sourceSets.main.get().resources {
 dependencies {
     minecraft("net.minecraftforge:forge:$mcVersion-${property("forgeVersion")}")
 
-    compileOnly(fg.deobf("curse.maven:dynamictrees-252818:5065701"))
+    implementation(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-$mcVersion:${property("dynamicTreesVersion")}"))
 
-    compileOnly(fg.deobf("curse.maven:jade-324717:${property("jadeVersion")}"))
+    runtimeOnly(fg.deobf("curse.maven:jade-324717:${property("jadeFileId")}"))
 
-    compileOnly(fg.deobf("mezz.jei:jei-$mcVersion-forge-api:${property("jeiVersion")}"))
-    compileOnly(fg.deobf("mezz.jei:jei-$mcVersion-common-api:${property("jeiVersion")}"))
     runtimeOnly(fg.deobf("mezz.jei:jei-$mcVersion-forge:${property("jeiVersion")}"))
-
-    compileOnly(fg.deobf("curse.maven:SereneSeasons-291874:${property("ssVersion")}"))
-
+    runtimeOnly(fg.deobf("curse.maven:SereneSeasons-291874:${property("ssFileId")}"))
     runtimeOnly(fg.deobf("vazkii.patchouli:Patchouli:${property("patchouliVersion")}"))
-
     runtimeOnly(fg.deobf("cc.tweaked:cc-tweaked-$mcVersion-core:${property("ccVersion")}"))
     runtimeOnly(fg.deobf("cc.tweaked:cc-tweaked-$mcVersion-forge:${property("ccVersion")}"))
 
