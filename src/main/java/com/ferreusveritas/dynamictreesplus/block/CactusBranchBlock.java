@@ -27,7 +27,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -50,6 +50,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -162,7 +163,7 @@ public class CactusBranchBlock extends BranchBlock {
             damage = true;
         }
 
-        if (damage) entity.hurt(DamageSource.CACTUS, 1.0F);
+        if (damage) entity.hurt(worldIn.damageSources().cactus(), 1.0F);
     }
 
 

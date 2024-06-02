@@ -7,35 +7,31 @@ import java.time.format.DateTimeFormatter
 fun property(key: String) = project.findProperty(key).toString()
 fun optionalProperty(key: String) = project.findProperty(key)?.toString()
 
+apply(from = "https://gist.githubusercontent.com/Harleyoc1/4d23d4e991e868d98d548ac55832381e/raw/applesiliconfg.gradle")
+
 plugins {
     id("java")
     id("net.minecraftforge.gradle")
     id("org.parchmentmc.librarian.forgegradle")
     id("idea")
     id("maven-publish")
+    id("com.harleyoconnor.translationsheet") version "0.1.1"
     id("com.matthewprenger.cursegradle") version "1.4.0"
     id("com.modrinth.minotaur") version "2.+"
-    id("com.harleyoconnor.autoupdatetool") version "1.0.5"
-}
-
-apply {
-    from("https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle")
-    from("https://gist.githubusercontent.com/Harleyoc1/4d23d4e991e868d98d548ac55832381e/raw/applesiliconfg.gradle")
+    id("com.harleyoconnor.autoupdatetool") version "1.0.9"
 }
 
 repositories {
-    mavenLocal()
-    maven("https://ldtteam.jfrog.io/ldtteam/modding/")
+    mavenCentral()
+    maven("https://ldtteam.jfrog.io/ldtteam/modding/") //patchouli
+    //maven("https://maven.tehnut.info")
     maven("https://www.cursemaven.com") {
         content {
             includeGroup("curse.maven")
         }
     }
-    maven("https://harleyoconnor.com/maven")
-    maven("https://squiddev.cc/maven/")
-    flatDir {
-        dir("libs")
-    }
+    //maven("https://harleyoconnor.com/maven")
+    maven("https://squiddev.cc/maven/") //cc-twekaed
 }
 
 val modName = property("modName")
@@ -48,7 +44,8 @@ version = "$mcVersion-$modVersion"
 group = property("group")
 
 minecraft {
-    mappings("parchment", "${property("mappingsVersion")}-$mcVersion")
+    mappings(property("mappingsChannel"), property("mappingsVersion"))
+    accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
 
     runs {
         create("client") {
@@ -73,11 +70,11 @@ minecraft {
             applyDefaultConfiguration()
 
             args(
-                "--mod", modId,
-                "--all",
-                "--output", file("src/generated/resources/"),
-                "--existing", file("src/main/resources"),
-                "--existing-mod", "dynamictrees"
+                    "--mod", modId,
+                    "--all",
+                    "--output", file("src/generated/resources/"),
+                    "--existing", file("src/main/resources"),
+                    "--existing-mod", "dynamictrees"
             )
         }
     }
@@ -85,34 +82,47 @@ minecraft {
 
 sourceSets.main.get().resources {
     srcDir("src/generated/resources")
+    srcDir("src/localization/resources")
 }
 
 dependencies {
-    minecraft("net.minecraftforge:forge:${mcVersion}-${property("forgeVersion")}")
+    minecraft("net.minecraftforge:forge:$mcVersion-${property("forgeVersion")}")
 
-    implementation(fg.deobf("curse.maven:jade-324717:4433884"))
+    compileOnly(fg.deobf("curse.maven:dynamictrees-252818:5065701"))
 
+    compileOnly(fg.deobf("curse.maven:jade-324717:${property("jadeVersion")}"))
+
+    compileOnly(fg.deobf("mezz.jei:jei-$mcVersion-forge-api:${property("jeiVersion")}"))
+    compileOnly(fg.deobf("mezz.jei:jei-$mcVersion-common-api:${property("jeiVersion")}"))
     runtimeOnly(fg.deobf("mezz.jei:jei-$mcVersion-forge:${property("jeiVersion")}"))
 
-    //implementation(fg.deobf("libs:DynamicTrees:1.19.2-1.2.0-BETA2.002"))
-    implementation(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-$mcVersion:${property("dynamicTreesVersion")}"))
+    compileOnly(fg.deobf("curse.maven:SereneSeasons-291874:${property("ssVersion")}"))
 
-    runtimeOnly(fg.deobf("vazkii.patchouli:Patchouli:$mcVersion-${property("patchouliVersion")}"))
-    runtimeOnly(fg.deobf("org.squiddev:cc-tweaked-$mcVersion:${property("ccVersion")}"))
-    runtimeOnly(fg.deobf("com.harleyoconnor.suggestionproviderfix:SuggestionProviderFix-1.19:${property("suggestionProviderFixVersion")}"))
+    runtimeOnly(fg.deobf("vazkii.patchouli:Patchouli:${property("patchouliVersion")}"))
 
-    runtimeOnly(fg.deobf("curse.maven:SereneSeasons-291874:4037228"))
+    runtimeOnly(fg.deobf("cc.tweaked:cc-tweaked-$mcVersion-core:${property("ccVersion")}"))
+    runtimeOnly(fg.deobf("cc.tweaked:cc-tweaked-$mcVersion-forge:${property("ccVersion")}"))
+
+    // runtimeOnly(fg.deobf("com.harleyoconnor.suggestionproviderfix:SuggestionProviderFix-1.19:${property("suggestionProviderFixVersion")}"))
+}
+
+translationSheet {
+    sheetId.set("1xjxEh2NdbeV_tQc6fDHPgcRmtchqCZJKt--6oifq1qc")
+    sectionColour.set(0xF9CB9C)
+    sectionPattern.set("Dynamic Trees")
+    outputDirectory.set(file("src/localization/resources/assets/dynamictrees/lang/"))
+    useJson()
 }
 
 tasks.jar {
     manifest.attributes(
-        "Specification-Title" to project.name,
-        "Specification-Vendor" to "ferreusveritas",
-        "Specification-Version" to "1",
-        "Implementation-Title" to project.name,
-        "Implementation-Version" to project.version,
-        "Implementation-Vendor" to "ferreusveritas",
-        "Implementation-Timestamp" to DateTimeFormatter.ISO_INSTANT.format(Instant.now())
+            "Specification-Title" to project.name,
+            "Specification-Vendor" to "ferreusveritas",
+            "Specification-Version" to "1",
+            "Implementation-Title" to project.name,
+            "Implementation-Version" to project.version,
+            "Implementation-Vendor" to "ferreusveritas",
+            "Implementation-Timestamp" to DateTimeFormatter.ISO_INSTANT.format(Instant.now())
     )
 
     archiveBaseName.set(modName)
@@ -245,10 +255,8 @@ publishing {
     }
 }
 
-val minecraftVersion = mcVersion
-
 autoUpdateTool {
-    mcVersion.set(minecraftVersion)
+    minecraftVersion.set(mcVersion)
     version.set(modVersion)
     versionRecommended.set(property("versionRecommended") == "true")
     changelogOutputFile.set(changelogFile)

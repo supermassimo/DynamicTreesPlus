@@ -227,9 +227,9 @@ public class HugeMushroomSpecies extends Species {
     @Override
     public void addSaplingTextures(BiConsumer<String, ResourceLocation> textureConsumer,
                                    ResourceLocation leavesTextureLocation, ResourceLocation barkTextureLocation) {
-        ResourceLocation capLoc = getTexturePath(SAPLING).orElse(surround(this.getRegistryName(), "block/", "_cap"));
-        textureConsumer.accept("stem", capLoc);
-        textureConsumer.accept("cap", capLoc);
+        final ResourceLocation capLocation = surround(this.getRegistryName(), "block/", "_cap");
+        textureConsumer.accept("stem", barkTextureLocation);
+        textureConsumer.accept("cap", capLocation);
     }
 
     public float getChanceToAge() {

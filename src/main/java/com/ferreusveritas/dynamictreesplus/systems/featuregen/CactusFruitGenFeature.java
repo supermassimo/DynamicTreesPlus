@@ -98,7 +98,7 @@ public class CactusFruitGenFeature extends FruitGenFeature {
         return pos != BlockPos.ZERO
                 && (CoordUtils.coordHashCode(pos, 0) & 6) == 0
                 && world.getRandom().nextFloat() <= configuration.get(PLACE_CHANCE)
-                && world.getBlockState(pos).getMaterial().isReplaceable()
+                && world.getBlockState(pos).canBeReplaced()
                 && !(belowState.getBlock() instanceof CactusBranchBlock && belowState.getValue(CactusBranchBlock.TRUNK_TYPE) != CactusBranchBlock.CactusThickness.BRANCH);
     }
 

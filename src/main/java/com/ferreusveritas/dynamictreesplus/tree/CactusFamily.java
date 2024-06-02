@@ -8,7 +8,7 @@ import com.ferreusveritas.dynamictreesplus.block.CactusBranchBlock;
 import com.ferreusveritas.dynamictreesplus.event.BakedModelEventHandler;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -25,10 +25,6 @@ public class CactusFamily extends Family {
         super(registryName);
     }
 
-    @Override
-    public Material getDefaultBranchMaterial() {
-        return Material.CACTUS;
-    }
 
     @Override
     public SoundType getDefaultBranchSoundType() {

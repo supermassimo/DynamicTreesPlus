@@ -38,6 +38,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Tags;
 
+import static com.ferreusveritas.dynamictrees.util.ResourceLocationUtils.surround;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -195,9 +197,9 @@ public class CactusSpecies extends Species {
     @Override
     public void addSaplingTextures(BiConsumer<String, ResourceLocation> textureConsumer,
                                    ResourceLocation leavesTextureLocation, ResourceLocation barkTextureLocation) {
-        ResourceLocation sideLoc = this.getFamily().getTexturePath(Family.BRANCH).orElse(barkTextureLocation);
-        ResourceLocation topLoc = this.getFamily().getTexturePath(Family.BRANCH_TOP).orElse(suffix(barkTextureLocation, "_top"));
-        ResourceLocation botLoc = this.getFamily().getTexturePath(CactusFamily.BRANCH_BOTTOM).orElse(suffix(barkTextureLocation, "_bottom"));
+        final ResourceLocation sideLoc = surround(this.getRegistryName(), "block/", "_side");
+        final ResourceLocation topLoc = surround(this.getRegistryName(), "block/", "_top");
+        final ResourceLocation botLoc = surround(this.getRegistryName(), "block/", "_bottom");
         textureConsumer.accept("side", sideLoc);
         textureConsumer.accept("top", topLoc);
         textureConsumer.accept("bottom", botLoc);

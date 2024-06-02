@@ -1,17 +1,22 @@
 package com.ferreusveritas.dynamictreesplus;
 
+import com.ferreusveritas.dynamictrees.DynamicTrees;
 import com.ferreusveritas.dynamictrees.api.GatherDataHelper;
 import com.ferreusveritas.dynamictrees.api.registry.RegistryHandler;
 import com.ferreusveritas.dynamictrees.block.leaves.LeavesProperties;
 import com.ferreusveritas.dynamictrees.block.rooty.SoilProperties;
-import com.ferreusveritas.dynamictrees.init.DTConfigs;
+import com.ferreusveritas.dynamictrees.data.provider.DTDatapackBuiltinEntriesProvider;
 import com.ferreusveritas.dynamictrees.tree.family.Family;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
 import com.ferreusveritas.dynamictreesplus.block.mushroom.CapProperties;
 import com.ferreusveritas.dynamictreesplus.init.DTPClient;
 import com.ferreusveritas.dynamictreesplus.init.DTPConfigs;
 import com.ferreusveritas.dynamictreesplus.init.DTPRegistries;
+import com.ferreusveritas.dynamictrees.worldgen.DynamicTreeFeature;
+import com.ferreusveritas.dynamictrees.loot.DTLoot;
+import com.ferreusveritas.dynamictrees.resources.Resources;
 import com.ferreusveritas.dynamictreesplus.worldgen.structure.VillageCactusReplacement;
+import net.minecraft.core.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -21,6 +26,10 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+
+import java.util.Set;
 
 @Mod(DynamicTreesPlus.MOD_ID)
 public class DynamicTreesPlus {
@@ -29,8 +38,9 @@ public class DynamicTreesPlus {
 
     public DynamicTreesPlus() {
         final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        final ModLoadingContext loadingContext = ModLoadingContext.get();
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, DTPConfigs.SERVER_CONFIG);
+        loadingContext.registerConfig(ModConfig.Type.SERVER, DTPConfigs.SERVER_CONFIG);
 
         modBus.addListener(this::clientSetup);
         modBus.addListener(this::commonSetup);
@@ -46,12 +56,18 @@ public class DynamicTreesPlus {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        if (DTConfigs.CANCEL_VANILLA_VILLAGE_TREES.get()) {
-            VillageCactusReplacement.replaceCactiFromVanillaVillages();
-        }
+        // VillageCactusReplacement.replaceCactiFromVanillaVillages();
+        DTLoot.load();
+        DynamicTreeFeature.setup();
+
+        // Clears and locks registry handlers to free them from memory.
+        RegistryHandler.REGISTRY.clear();
+
+        Resources.MANAGER.setup();
     }
 
     private void gatherData(final GatherDataEvent event) {
+        Resources.MANAGER.gatherData();
         GatherDataHelper.gatherAllData(
                 MOD_ID,
                 event,

@@ -9,7 +9,7 @@ import com.ferreusveritas.dynamictrees.block.leaves.LeavesProperties;
 import com.ferreusveritas.dynamictrees.systems.GrowSignal;
 import com.ferreusveritas.dynamictrees.tree.family.Family;
 import com.ferreusveritas.dynamictreesplus.systems.mushroomlogic.MushroomCapDisc;
-import com.mojang.math.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -162,7 +162,7 @@ public class DynamicCapBlock extends HugeMushroomBlock implements TreePart, Upda
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
         if (random.nextInt(50) == 0 && level.isEmptyBlock(pos.below())) {
-            Vector3d vec = properties.sporeParticleSpeed(state, level, pos, random);
+            Vec3 vec = properties.sporeParticleSpeed(state, level, pos, random);
             level.addParticle(properties.sporeParticleType(state, level, pos, random), (double) pos.getX() + random.nextDouble(), (double) pos.getY() - 0.1D, (double) pos.getZ() + random.nextDouble(), vec.x, vec.y, vec.z);
         }
     }

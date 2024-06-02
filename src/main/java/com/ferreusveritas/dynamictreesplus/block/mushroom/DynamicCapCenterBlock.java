@@ -277,7 +277,7 @@ public class DynamicCapCenterBlock extends Block implements TreePart, UpdatesSur
 
     public static boolean canCapReplace(BlockState state){
         // Mushroom caps take precedence over leaves
-        return state.getMaterial().isReplaceable() || state.is(DTBlockTags.FOLIAGE) || state.is(BlockTags.LEAVES);
+        return state.canBeReplaced() || state.is(DTBlockTags.FOLIAGE) || state.is(BlockTags.LEAVES);
     }
 
     @Nonnull
