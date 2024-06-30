@@ -5,7 +5,6 @@ import com.ferreusveritas.dynamictrees.api.registry.RegistryEntry;
 import com.ferreusveritas.dynamictrees.api.registry.RegistryHandler;
 import com.ferreusveritas.dynamictrees.api.registry.TypedRegistry;
 import com.ferreusveritas.dynamictrees.block.branch.BranchBlock;
-import com.ferreusveritas.dynamictrees.block.leaves.LeavesProperties;
 import com.ferreusveritas.dynamictrees.data.provider.DTBlockStateProvider;
 import com.ferreusveritas.dynamictrees.data.provider.DTLootTableProvider;
 import com.ferreusveritas.dynamictrees.init.DTTrees;
@@ -17,6 +16,7 @@ import com.ferreusveritas.dynamictrees.tree.family.Family;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
 import com.ferreusveritas.dynamictrees.util.*;
 import com.ferreusveritas.dynamictreesplus.data.CapStateGenerator;
+import com.ferreusveritas.dynamictreesplus.data.CapCenterStateGenerator;
 import com.ferreusveritas.dynamictreesplus.systems.mushroomlogic.MushroomCapDisc;
 import com.ferreusveritas.dynamictreesplus.tree.HugeMushroomSpecies;
 import net.minecraft.world.phys.Vec3;
@@ -39,7 +39,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -50,6 +49,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public class CapProperties extends RegistryEntry<CapProperties> implements Resettable<CapProperties> {
 
@@ -142,9 +142,9 @@ public class CapProperties extends RegistryEntry<CapProperties> implements Reset
     ///////////////////////////////////////////
 
     /**
-     * Gets the primitive (vanilla) leaves for these {@link LeavesProperties}.
+     * Gets the primitive (vanilla) mushroom block for these {@link CapProperties}.
      *
-     * @return The {@link BlockState} for the primitive leaves.
+     * @return The {@link BlockState} for the primitive mushroom block.
      */
     public BlockState getPrimitiveCap() {
         return primitiveCap;
@@ -429,13 +429,82 @@ public class CapProperties extends RegistryEntry<CapProperties> implements Reset
         return fromRadius;
     }
 
-    protected final MutableLazyValue<Generator<DTBlockStateProvider, CapProperties>> stateGenerator =
+    protected final MutableLazyValue<Generator<DTBlockStateProvider, CapProperties>> capStateGenerator =
             MutableLazyValue.supplied(CapStateGenerator::new);
+    protected final MutableLazyValue<Generator<DTBlockStateProvider, CapProperties>> capCenterStateGenerator =
+            MutableLazyValue.supplied(CapCenterStateGenerator::new);
+
+    ///////////////////////////////////////////
+    // DATA GENERATION
+    ///////////////////////////////////////////
 
     @Override
     public void generateStateData(DTBlockStateProvider provider) {
         // Generate cap block state and model.
-        this.stateGenerator.get().generate(provider, this);
+        this.capStateGenerator.get().generate(provider, this);
+        this.capCenterStateGenerator.get().generate(provider, this);
+    }
+
+    public String getCapCenterAgeZeroModelName() {
+        return "block/mushroom/" + centerBlockRegistryName.getPath() + "_age0";
+    }
+    public String getCapFaceModelName() {
+        return "block/mushroom/" + blockRegistryName.getPath();
+    }
+    public String getCapInsideFaceModelName() {
+        return "block/mushroom/" + blockRegistryName.getPath() + "_inside";
+    }
+
+    public ResourceLocation getCapCenterAgeZeroModelParent() {
+        return getModelPath(CAP_CENTER_AGE_0_PARENT).orElse(new ResourceLocation("block/cube_bottom_top"));
+    }
+    public ResourceLocation getFaceModelParent() {
+        return getModelPath(FACE).orElse(new ResourceLocation("block/template_single_face"));
+    }
+
+    private boolean generateFaceModels = false;
+
+    public void setGenerateFaceModels(boolean generateFaceModels) {
+        this.generateFaceModels = generateFaceModels;
+    }
+
+    public boolean shouldGenerateFaceModels() {
+        return generateFaceModels;
+    }
+
+    public void addCapCenterAgeZeroTextures(BiConsumer<String, ResourceLocation> textureConsumer,
+                                            ResourceLocation outsideTextureLocation, ResourceLocation insideTextureLocation) {
+        ResourceLocation outLoc = getTexturePath(OUTSIDE_FACE).orElse(outsideTextureLocation);
+        ResourceLocation inLoc = getTexturePath(INSIDE_FACE).orElse(insideTextureLocation);
+        textureConsumer.accept("top", outLoc);
+        textureConsumer.accept("bottom", inLoc);
+        textureConsumer.accept("side", outLoc);
+    }
+
+    public void addCapFaceTextures(BiConsumer<String, ResourceLocation> textureConsumer,
+                                            ResourceLocation textureLocation, boolean isInside) {
+        ResourceLocation faceLoc = getTexturePath(isInside?INSIDE_FACE:OUTSIDE_FACE).orElse(textureLocation);
+        textureConsumer.accept("texture", faceLoc);
+    }
+
+    protected HashMap<String, ResourceLocation> textureOverrides = new HashMap<>();
+    protected HashMap<String, ResourceLocation> modelOverrides = new HashMap<>();
+    public static final String OUTSIDE_FACE = "outside_face";
+    public static final String INSIDE_FACE = "inside_face";
+    public static final String FACE = "face";
+    public static final String CAP_CENTER_AGE_0_PARENT = "cap_center_age_0_parent";
+
+    public void setTextureOverrides(Map<String, ResourceLocation> textureOverrides) {
+        this.textureOverrides.putAll(textureOverrides);
+    }
+    public void setModelOverrides(Map<String, ResourceLocation> modelOverrides) {
+        this.modelOverrides.putAll(modelOverrides);
+    }
+    public Optional<ResourceLocation> getTexturePath(String key) {
+        return Optional.ofNullable(textureOverrides.getOrDefault(key, null));
+    }
+    public Optional<ResourceLocation> getModelPath(String key) {
+        return Optional.ofNullable(modelOverrides.getOrDefault(key, null));
     }
 
 }

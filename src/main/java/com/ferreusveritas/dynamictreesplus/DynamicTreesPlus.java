@@ -68,9 +68,7 @@ public class DynamicTreesPlus {
 
     private void gatherData(final GatherDataEvent event) {
         Resources.MANAGER.gatherData();
-        GatherDataHelper.gatherAllData(
-                MOD_ID,
-                event,
+        GatherDataHelper.gatherAllData(MOD_ID, event,
                 SoilProperties.REGISTRY,
                 Family.REGISTRY,
                 Species.REGISTRY,

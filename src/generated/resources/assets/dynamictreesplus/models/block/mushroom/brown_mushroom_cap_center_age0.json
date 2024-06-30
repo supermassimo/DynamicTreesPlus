@@ -2,7 +2,7 @@
   "parent": "minecraft:block/slab",
   "textures": {
     "bottom": "minecraft:block/mushroom_block_inside",
-    "top": "minecraft:block/brown_mushroom_block",
-    "side": "minecraft:block/brown_mushroom_block"
+    "side": "minecraft:block/brown_mushroom_block",
+    "top": "minecraft:block/brown_mushroom_block"
   }
 }

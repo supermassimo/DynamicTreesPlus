@@ -3,6 +3,6 @@
   "render_type": "minecraft:cutout_mipped",
   "textures": {
     "cap": "dynamictreesplus:block/brown_mushroom_cap",
-    "stem": "dynamictreesplus:block/brown_mushroom_cap"
+    "stem": "minecraft:block/mushroom_stem"
   }
 }
