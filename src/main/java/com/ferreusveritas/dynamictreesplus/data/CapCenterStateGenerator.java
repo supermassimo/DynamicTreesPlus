@@ -30,7 +30,7 @@ public class CapCenterStateGenerator implements Generator<DTBlockStateProvider, 
                 input.getModelPath(CapProperties.OUTSIDE_FACE).orElse(outLocation)
         );
         ModelFile.ExistingModelFile inFaceModel = provider.models().getExistingFile(
-                input.getModelPath(CapProperties.OUTSIDE_FACE).orElse(inLocation)
+                input.getModelPath(CapProperties.INSIDE_FACE).orElse(inLocation)
         );
 
         final BlockModelBuilder ageZeroModel = provider.models().getBuilder(input.getCapCenterAgeZeroModelName())

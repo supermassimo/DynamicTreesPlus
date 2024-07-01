@@ -35,7 +35,7 @@ public class CapStateGenerator implements Generator<DTBlockStateProvider, CapPro
                     input.getModelPath(CapProperties.OUTSIDE_FACE).orElse(outLocation)
             );
             inFaceModel = provider.models().getExistingFile(
-                    input.getModelPath(CapProperties.OUTSIDE_FACE).orElse(inLocation)
+                    input.getModelPath(CapProperties.INSIDE_FACE).orElse(inLocation)
             );
         }
 
