@@ -1,8 +1,20 @@
 {
+  "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1.0,
       "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chances": [
+            0.2,
+            0.2333333,
+            0.2666666,
+            0.3
+          ],
+          "condition": "minecraft:table_bonus",
+          "enchantment": "minecraft:fortune"
+        }
+      ],
       "entries": [
         {
           "type": "minecraft:alternatives",
@@ -38,18 +50,8 @@
           "function": "minecraft:explosion_decay"
         }
       ],
-      "conditions": [
-        {
-          "condition": "minecraft:table_bonus",
-          "enchantment": "minecraft:fortune",
-          "chances": [
-            0.2,
-            0.2333333,
-            0.2666666,
-            0.3
-          ]
-        }
-      ]
+      "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "dynamictreesplus:trees/mushroom_caps/brown_mushroom"
 }

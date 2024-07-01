@@ -32,6 +32,9 @@ repositories {
     }
     maven("https://harleyoconnor.com/maven")
     maven("https://squiddev.cc/maven/") //cc-twekaed
+    flatDir {
+        dir("libs")
+    }
 }
 
 val modName = property("modName")
@@ -88,6 +91,7 @@ sourceSets.main.get().resources {
 dependencies {
     minecraft("net.minecraftforge:forge:$mcVersion-${property("forgeVersion")}")
 
+    //implementation(fg.deobf("libs:DynamicTrees:1.20.1-1.3.0-BETA8.001"))
     implementation(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-$mcVersion:${property("dynamicTreesVersion")}"))
 
     runtimeOnly(fg.deobf("curse.maven:jade-324717:${property("jadeFileId")}"))

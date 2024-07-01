@@ -3,7 +3,6 @@ package com.ferreusveritas.dynamictreesplus.resources;
 import com.ferreusveritas.dynamictrees.api.TreeRegistry;
 import com.ferreusveritas.dynamictrees.api.configuration.ConfigurationTemplateResourceLoader;
 import com.ferreusveritas.dynamictrees.api.resource.loading.preparation.JsonRegistryResourceLoader;
-import com.ferreusveritas.dynamictrees.block.leaves.LeavesProperties;
 import com.ferreusveritas.dynamictrees.deserialisation.JsonHelper;
 import com.ferreusveritas.dynamictrees.deserialisation.ResourceLocationDeserialiser;
 import com.ferreusveritas.dynamictrees.deserialisation.result.JsonResult;
@@ -11,6 +10,8 @@ import com.ferreusveritas.dynamictrees.tree.family.Family;
 import com.ferreusveritas.dynamictreesplus.block.mushroom.CapProperties;
 import com.ferreusveritas.dynamictreesplus.systems.mushroomlogic.MushroomShapeConfiguration;
 import com.ferreusveritas.dynamictreesplus.systems.mushroomlogic.shapekits.MushroomShapeKit;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.MapColor;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -41,10 +42,9 @@ public class CapPropertiesResourceLoader extends JsonRegistryResourceLoader<CapP
         this.gatherDataAppliers
                 .register("primitive_cap", Block.class, CapProperties::setPrimitiveCap)
                 .register("generate_face_models", Boolean.class, CapProperties::setGenerateFaceModels)
-                .registerListApplier("mushroom_drop_chances", Float.class, CapProperties::setMushroomDropChances)
                 .registerMapApplier("texture_overrides", ResourceLocation.class, CapProperties::setTextureOverrides)
-                .registerMapApplier("model_overrides", ResourceLocation.class, CapProperties::setModelOverrides);
-
+                .registerMapApplier("model_overrides", ResourceLocation.class, CapProperties::setModelOverrides)
+                .register("mushroom_item", Item.class, CapProperties::setMushroomItem);
 
         // Primitive leaves are needed both client and server (so cannot be done on load).
         this.setupAppliers.register("primitive_cap", Block.class, CapProperties::setPrimitiveCap)

@@ -4,5 +4,6 @@
   "age_zero_shape": "slab",
   "model_overrides": {
     "cap_center_age_0_parent": "minecraft:block/slab"
-  }
+  },
+  "mushroom_item": "brown_mushroom"
 }

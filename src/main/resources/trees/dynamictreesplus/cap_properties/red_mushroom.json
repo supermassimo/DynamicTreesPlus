@@ -1,4 +1,5 @@
 {
   "primitive_cap": "red_mushroom_block",
-  "material_color": "COLOR_RED"
+  "material_color": "COLOR_RED",
+  "mushroom_item": "red_mushroom"
 }

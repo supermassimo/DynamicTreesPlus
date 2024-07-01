@@ -11,12 +11,12 @@ import com.ferreusveritas.dynamictrees.systems.nodemapper.DestroyerNode;
 import com.ferreusveritas.dynamictrees.systems.nodemapper.NetVolumeNode;
 import com.ferreusveritas.dynamictrees.systems.nodemapper.SpeciesNode;
 import com.ferreusveritas.dynamictrees.systems.nodemapper.StateNode;
-import com.ferreusveritas.dynamictrees.tree.family.Family;
 import com.ferreusveritas.dynamictrees.tree.species.Species;
 import com.ferreusveritas.dynamictrees.util.BlockBounds;
 import com.ferreusveritas.dynamictrees.util.BlockStates;
 import com.ferreusveritas.dynamictrees.util.BranchDestructionData;
 import com.ferreusveritas.dynamictrees.util.SimpleVoxmap;
+import com.ferreusveritas.dynamictreesplus.data.DTPLootTableHandler;
 import com.ferreusveritas.dynamictreesplus.systems.mushroomlogic.context.MushroomCapContext;
 import com.ferreusveritas.dynamictreesplus.tree.HugeMushroomFamily;
 import com.ferreusveritas.dynamictreesplus.tree.HugeMushroomSpecies;
@@ -29,6 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -170,6 +171,10 @@ public class MushroomBranchBlock extends ThickBranchBlock {
                     .orElse(CapProperties.NULL);
         }
         return CapProperties.NULL;
+    }
+
+    public LootTable.Builder createBranchDrops() {
+        return DTPLootTableHandler.createMushroomBranchDrops(getPrimitiveLog().get());
     }
 
 }

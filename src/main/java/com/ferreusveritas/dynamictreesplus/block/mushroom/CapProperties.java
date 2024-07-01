@@ -6,7 +6,6 @@ import com.ferreusveritas.dynamictrees.api.registry.RegistryHandler;
 import com.ferreusveritas.dynamictrees.api.registry.TypedRegistry;
 import com.ferreusveritas.dynamictrees.block.branch.BranchBlock;
 import com.ferreusveritas.dynamictrees.data.provider.DTBlockStateProvider;
-import com.ferreusveritas.dynamictrees.data.provider.DTLootTableProvider;
 import com.ferreusveritas.dynamictrees.init.DTTrees;
 import com.ferreusveritas.dynamictrees.loot.DTLootContextParams;
 import com.ferreusveritas.dynamictrees.loot.DTLootParameterSets;
@@ -17,8 +16,11 @@ import com.ferreusveritas.dynamictrees.tree.species.Species;
 import com.ferreusveritas.dynamictrees.util.*;
 import com.ferreusveritas.dynamictreesplus.data.CapStateGenerator;
 import com.ferreusveritas.dynamictreesplus.data.CapCenterStateGenerator;
+import com.ferreusveritas.dynamictreesplus.data.DTPLootTableHandler;
 import com.ferreusveritas.dynamictreesplus.systems.mushroomlogic.MushroomCapDisc;
 import com.ferreusveritas.dynamictreesplus.tree.HugeMushroomSpecies;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.phys.Vec3;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -43,9 +45,9 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootDataManager;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -161,7 +163,7 @@ public class CapProperties extends RegistryEntry<CapProperties> implements Reset
     }
 
     /**
-     * Gets {@link ItemStack} of the primitive (vanilla) leaves (for things like when it's sheared).
+     * Gets {@link ItemStack} of the primitive (vanilla) mushroom block (for things like when it's silk-touched).
      *
      * @return The {@link ItemStack} object.
      */
@@ -350,21 +352,17 @@ public class CapProperties extends RegistryEntry<CapProperties> implements Reset
     // LOOT
     ///////////////////////////////////////////
 
-    /**
-     * Chances for leaves to drop seeds. Used in data gen for loot tables.
-     */
-    protected float[] mushroomDropChances = new float[]{0.015625F, 0.03125F, 0.046875F, 0.0625F};
-
-    public void setMushroomDropChances(float[] mushroomDropChances) {
-        this.mushroomDropChances = mushroomDropChances;
-    }
-
-    public void setMushroomDropChances(Collection<Float> mushroomDropChances) {
-        this.mushroomDropChances = new float[mushroomDropChances.size()];
-        Iterator<Float> iterator = mushroomDropChances.iterator();
-        for (int i = 0; i < mushroomDropChances.size(); i++) {
-            this.mushroomDropChances[i] = iterator.next();
+    private Item mushroomItem;
+    public final Item getMushroomItem() {
+        if (this.mushroomItem == null) {
+            LogManager.getLogger().warn("Invoked too early or item was not set on \"" + this.getRegistryName() + "\".");
+            return Items.AIR;
+        } else {
+            return this.mushroomItem;
         }
+    }
+    public void setMushroomItem(Item mushroomItem) {
+        this.mushroomItem = mushroomItem;
     }
 
     private final LootTableSupplier blockLootTableSupplier;
@@ -373,16 +371,15 @@ public class CapProperties extends RegistryEntry<CapProperties> implements Reset
         return blockLootTableSupplier.getName();
     }
 
-
     public boolean shouldGenerateBlockDrops() {
         return shouldGenerateDrops();
     }
 
     public LootTable.Builder createBlockDrops() {
-        if (mushroomDropChances != null && getPrimitiveCapBlock().isPresent()) {
-            return DTLootTableProvider.BlockLoot.createLeavesBlockDrops(primitiveCap.getBlock(), mushroomDropChances);
+        if (getPrimitiveCapBlock().isPresent()) {
+            return DTPLootTableHandler.createCapBlockDrops(primitiveCap.getBlock(), getMushroomItem(), -6, 2);
         }
-        return DTLootTableProvider.BlockLoot.createLeavesDrops(mushroomDropChances, LootContextParamSets.BLOCK);
+        return DTPLootTableHandler.createCapDrops(primitiveCap.getBlock(), getMushroomItem(), LootContextParamSets.BLOCK);
     }
 
     private final LootTableSupplier lootTableSupplier;
@@ -400,7 +397,7 @@ public class CapProperties extends RegistryEntry<CapProperties> implements Reset
     }
 
     public LootTable.Builder createDrops() {
-        return DTLootTableProvider.BlockLoot.createLeavesDrops(mushroomDropChances, DTLootParameterSets.LEAVES);
+        return DTPLootTableHandler.createCapDrops(primitiveCap.getBlock(), getMushroomItem(), DTLootParameterSets.LEAVES);
     }
 
     public List<ItemStack> getDrops(Level level, BlockPos pos, ItemStack tool, Species species) {
