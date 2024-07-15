@@ -6,6 +6,7 @@
   "stick": "air",
   "generate_stripped_branch": false,
   "max_branch_radius": 24,
+  "max_signal_depth": 64,
   "texture_overrides": {
     "branch": "block/mushroom_stem",
     "branch_top": "block/mushroom_block_inside"

@@ -377,9 +377,11 @@ public class HugeMushroomSpecies extends Species {
 
             private void generateMushroomCap(GenerationContext context, HugeMushroomSpecies species, List<Pair<BlockPos, Integer>> capAges){
                 LevelAccessor level = context.level();
-                for (Pair<BlockPos, Integer> capAge : capAges){
-                    level.setBlock(capAge.getA(), capProperties.getDynamicCapState(true, capAge.getB()), 2);
-                    species.getMushroomShapeKit().generateMushroomCap(new MushroomCapContext(level, capAge.getA(), species, capAge.getB()));
+                for (Pair<BlockPos, Integer> posAge : capAges){
+                    int age = Math.min(posAge.getB(), species.getMushroomShapeKit().getMaxCapAge());
+                    BlockPos centerPos = posAge.getA();
+                    level.setBlock(centerPos, capProperties.getDynamicCapState(true, age), 2);
+                    species.getMushroomShapeKit().generateMushroomCap(new MushroomCapContext(level, centerPos, species, age));
                 }
             }
 
