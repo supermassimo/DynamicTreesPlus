@@ -96,12 +96,12 @@ public class DTPRegistries {
     }
 
     @SubscribeEvent
-    public static void onFeatureCancellerRegistry(final com.ferreusveritas.dynamictrees.api.registry.RegistryEvent<FeatureCanceller> event) {
+    public static void onFeatureCancellerRegistry(final RegistryEvent<FeatureCanceller> event) {
         event.getRegistry().registerAll(new CactusFeatureCanceller<>(DynamicTreesPlus.location("cactus"), CactusBlock.class));
     }
 
     @SubscribeEvent
-    public static void onMushroomShapeKitRegistry(final com.ferreusveritas.dynamictrees.api.registry.RegistryEvent<MushroomShapeKit> event) {
+    public static void onMushroomShapeKitRegistry(final RegistryEvent<MushroomShapeKit> event) {
         MushroomShapeKits.register(event.getRegistry());
     }
 
